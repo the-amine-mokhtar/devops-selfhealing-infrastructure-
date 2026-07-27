@@ -1,0 +1,86 @@
+<div class="home-view">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-copy">
+        <span class="ey-label">CASE STUDY</span>
+        <h1>Engagement<br/>command center</h1>
+        <p>Real-time visibility into client engagements across the firm. Track activity, monitor deadlines, and manage consultant workload — all from one place.</p>
+        <div class="hero-actions">
+          <a class="primary" routerLink="/admin">Enter admin →</a>
+          <span class="secondary">{{ loading ? '…' : engagementCount + ' live engagements' }}</span>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <article class="stat-card">
+          <div class="stat-icon stat-icon--total"></div>
+          <div class="stat-body">
+            <strong>{{ loading ? '—' : engagementCount }}</strong>
+            <span>Total engagements</span>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon stat-icon--active"></div>
+          <div class="stat-body">
+            <strong>{{ loading ? '—' : activeCount }}</strong>
+            <span>Active now</span>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon stat-icon--done"></div>
+          <div class="stat-body">
+            <strong>{{ loading ? '—' : completedCount }}</strong>
+            <span>Completed</span>
+          </div>
+        </article>
+        <article class="stat-card stat-card--accent">
+          <div class="stat-icon stat-icon--users"></div>
+          <div class="stat-body">
+            <strong>{{ loading ? '—' : userCount }}</strong>
+            <span>Consultants</span>
+          </div>
+        </article>
+        <div class="hero-note" *ngIf="!loading && !error">EY focus: trust, transformation, technology.</div>
+        <div class="hero-note error" *ngIf="error">{{ error }}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pillars">
+    <article>
+      <div class="pillar-icon pillar-icon--trust"></div>
+      <h3>Trust</h3>
+      <p>Risk, compliance, and controls that build confidence.</p>
+    </article>
+    <article>
+      <div class="pillar-icon pillar-icon--transform"></div>
+      <h3>Transformation</h3>
+      <p>Strategy, delivery, and measurable value creation.</p>
+    </article>
+    <article>
+      <div class="pillar-icon pillar-icon--tech"></div>
+      <h3>Technology</h3>
+      <p>Data, platforms, and automation at scale.</p>
+    </article>
+  </section>
+
+  <section class="spotlight" *ngIf="!loading && spotlight.length">
+    <div class="spotlight-head">
+      <h2>Recent engagements</h2>
+      <a routerLink="/admin" class="spotlight-cta">View all →</a>
+    </div>
+    <div class="spotlight-grid">
+      <article class="spotlight-card" *ngFor="let item of spotlight">
+        <div class="spotlight-card-top">
+          <span class="badge" [class.badge--active]="item.status === 'ACTIVE'" [class.badge--done]="item.status === 'COMPLETED'" [class.badge--warn]="item.status === 'ON_HOLD'">{{ item.status }}</span>
+          <span class="spotlight-value">{{ item.value | currency:'USD':'symbol':'1.0-0' }}</span>
+        </div>
+        <h4>{{ item.clientName }}</h4>
+        <div class="spotlight-meta">
+          <span>{{ item.consultant.fullName }}</span>
+          <span>Deadline {{ item.deadline }}</span>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

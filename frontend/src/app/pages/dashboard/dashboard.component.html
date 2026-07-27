@@ -1,0 +1,241 @@
+<div class="admin-view">
+  <header class="admin-hero">
+    <div class="admin-hero-copy">
+      <span class="ey-label">CONTROL CENTER</span>
+      <h1>Admin workspace</h1>
+      <p>Manage consultants and engagements across the firm.</p>
+    </div>
+    <div class="admin-stats">
+      <div class="admin-stat">
+        <div class="admin-stat-icon admin-stat-icon--users"></div>
+        <div>
+          <strong>{{ users.length }}</strong>
+          <span>Consultants</span>
+        </div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-icon admin-stat-icon--all"></div>
+        <div>
+          <strong>{{ engagements.length }}</strong>
+          <span>Engagements</span>
+        </div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-icon admin-stat-icon--active"></div>
+        <div>
+          <strong>{{ activeEngagements }}</strong>
+          <span>Active</span>
+        </div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-icon admin-stat-icon--done"></div>
+        <div>
+          <strong>{{ completedEngagements }}</strong>
+          <span>Completed</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-tabs">
+    <button type="button" [class.active]="viewMode === 'engagements'" (click)="setViewMode('engagements')">Engagements</button>
+    <button type="button" [class.active]="viewMode === 'users'" (click)="setViewMode('users')">Users</button>
+  </div>
+
+  <section class="admin-section" *ngIf="viewMode === 'engagements'">
+    <div class="admin-panel">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Engagements</h2>
+          <p>Create, filter, and manage client engagements.</p>
+        </div>
+        <div class="admin-filters">
+          <input [(ngModel)]="search" name="search" type="search" placeholder="Search client or consultant…" />
+          <select [(ngModel)]="statusFilter" name="statusFilter">
+            <option value="">All statuses</option>
+            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+          </select>
+          <button type="button" class="btn-ghost" (click)="applyFilters()">Filter</button>
+        </div>
+      </div>
+
+      <div class="admin-form-row">
+        <form [formGroup]="engagementForm" (ngSubmit)="saveEngagement()" class="admin-form">
+          <div class="admin-form-field">
+            <label>Client</label>
+            <input formControlName="clientName" type="text" placeholder="Client name" />
+          </div>
+          <div class="admin-form-field">
+            <label>Status</label>
+            <select formControlName="status">
+              <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+          <div class="admin-form-field">
+            <label>Consultant</label>
+            <select formControlName="consultantId">
+              <option [ngValue]="0" disabled>Select…</option>
+              <option *ngFor="let u of users" [ngValue]="u.id ?? 0">{{ u.fullName }}</option>
+            </select>
+          </div>
+          <div class="admin-form-field">
+            <label>Start</label>
+            <input formControlName="startDate" type="date" />
+          </div>
+          <div class="admin-form-field">
+            <label>Deadline</label>
+            <input formControlName="deadline" type="date" />
+          </div>
+          <div class="admin-form-field">
+            <label>Value ($)</label>
+            <input formControlName="value" type="number" min="0" step="0.01" placeholder="0.00" />
+          </div>
+          <div class="admin-form-actions">
+            <button type="submit" class="btn-primary">{{ selectedEngagementId ? 'Update' : 'Create' }}</button>
+            <button type="button" class="btn-ghost" (click)="resetEngagementForm()">Reset</button>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="selectedUserForEngagements" class="admin-filter-badge">
+        Showing engagements for <strong>{{ selectedUserForEngagements.fullName }}</strong>
+        <button type="button" class="btn-ghost" (click)="clearUserFilter()">Clear</button>
+      </div>
+
+      <div class="admin-table-wrap" *ngIf="!loading && filteredEngagements.length; else emptyE">
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Status</th>
+              <th>Consultant</th>
+              <th>Start</th>
+              <th>Deadline</th>
+              <th>Value</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of paginatedEngagements">
+              <td class="admin-cell-name">{{ item.clientName }}</td>
+              <td><span class="admin-badge" [class.admin-badge--active]="item.status === 'ACTIVE'" [class.admin-badge--done]="item.status === 'COMPLETED'" [class.admin-badge--warn]="item.status === 'ON_HOLD'" [class.admin-badge--planned]="item.status === 'PLANNED'">{{ item.status }}</span></td>
+              <td>{{ item.consultant.fullName }}</td>
+              <td>{{ item.startDate }}</td>
+              <td [class.admin-overdue]="item.deadline && item.deadline < today">{{ item.deadline }}</td>
+              <td class="admin-cell-value">{{ item.value | currency:'USD':'symbol':'1.0-2' }}</td>
+              <td class="admin-row-actions">
+                <button type="button" class="btn-sm" (click)="editEngagement(item)">Edit</button>
+                <button type="button" class="btn-sm btn-sm--danger" (click)="deleteEngagement(item.id!)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-pagination" *ngIf="filteredEngagements.length > pageSize">
+        <span class="admin-pagination-info">{{ filteredEngagements.length }} total · Page {{ engagementPage }} of {{ totalEngagementPages }}</span>
+        <div class="admin-pagination-controls">
+          <button type="button" class="btn-page" [class.btn-page--disabled]="engagementPage <= 1" (click)="goToEngagementPage(engagementPage - 1)" [disabled]="engagementPage <= 1">←</button>
+          <button type="button" class="btn-page" *ngFor="let p of engagementPageNumbers()" [class.btn-page--active]="p === engagementPage" (click)="goToEngagementPage(p)">{{ p }}</button>
+          <button type="button" class="btn-page" [class.btn-page--disabled]="engagementPage >= totalEngagementPages" (click)="goToEngagementPage(engagementPage + 1)" [disabled]="engagementPage >= totalEngagementPages">→</button>
+        </div>
+      </div>
+
+      <ng-template #emptyE>
+        <div class="admin-empty" *ngIf="!loading">
+          <div class="admin-empty-icon"></div>
+          <p *ngIf="!selectedUserForEngagements">No engagements yet. Create one above.</p>
+          <p *ngIf="selectedUserForEngagements">No engagements for this consultant.</p>
+        </div>
+      </ng-template>
+    </div>
+  </section>
+
+  <section class="admin-section" *ngIf="viewMode === 'users'">
+    <div class="admin-panel">
+      <div class="admin-panel-head">
+        <div>
+          <h2>Consultants</h2>
+          <p>Manage the team members assigned to engagements.</p>
+        </div>
+        <div class="admin-filters">
+          <button type="button" class="btn-ghost" (click)="exportUsersPdf()" [disabled]="exporting">{{ exporting ? 'Exporting…' : 'Export PDF' }}</button>
+        </div>
+      </div>
+
+      <div class="admin-form-row">
+        <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="admin-form admin-form--users">
+          <div class="admin-form-field">
+            <label>Full name</label>
+            <input formControlName="fullName" type="text" placeholder="e.g. Jane Doe" />
+          </div>
+          <div class="admin-form-field">
+            <label>Email</label>
+            <input formControlName="email" type="email" placeholder="jane@firm.com" />
+          </div>
+          <div class="admin-form-field">
+            <label>Role</label>
+            <select formControlName="role">
+              <option *ngFor="let r of roleOptions" [value]="r">{{ r }}</option>
+            </select>
+          </div>
+          <div class="admin-form-field">
+            <label>Password</label>
+            <input formControlName="password" type="password" placeholder="Leave blank to keep current" />
+          </div>
+          <div class="admin-form-actions">
+            <button type="submit" class="btn-primary">{{ selectedUserId ? 'Update' : 'Create' }}</button>
+            <button type="button" class="btn-ghost" (click)="resetUserForm()">Reset</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="admin-table-wrap" *ngIf="users.length; else emptyU">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of paginatedUsers">
+              <td class="admin-cell-name">{{ user.fullName }}</td>
+              <td>{{ user.email }}</td>
+              <td><span class="admin-badge admin-badge--role">{{ user.role }}</span></td>
+              <td class="admin-row-actions">
+                <button type="button" class="btn-sm" (click)="editUser(user)">Edit</button>
+                <button type="button" class="btn-sm" (click)="viewUserEngagements(user)">Engagements</button>
+                <button type="button" class="btn-sm btn-sm--danger" (click)="deleteUser(user.id!)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-pagination" *ngIf="users.length > pageSize">
+        <span class="admin-pagination-info">{{ users.length }} total · Page {{ userPage }} of {{ totalUserPages }}</span>
+        <div class="admin-pagination-controls">
+          <button type="button" class="btn-page" [class.btn-page--disabled]="userPage <= 1" (click)="goToUserPage(userPage - 1)" [disabled]="userPage <= 1">←</button>
+          <button type="button" class="btn-page" *ngFor="let p of userPageNumbers()" [class.btn-page--active]="p === userPage" (click)="goToUserPage(p)">{{ p }}</button>
+          <button type="button" class="btn-page" [class.btn-page--disabled]="userPage >= totalUserPages" (click)="goToUserPage(userPage + 1)" [disabled]="userPage >= totalUserPages">→</button>
+        </div>
+      </div>
+
+      <ng-template #emptyU>
+        <div class="admin-empty" *ngIf="!loading">
+          <div class="admin-empty-icon"></div>
+          <p>No consultants yet. Create one above.</p>
+        </div>
+      </ng-template>
+    </div>
+  </section>
+
+  <div class="admin-loading" *ngIf="loading">
+    <div class="admin-spinner"></div>
+    <span>Loading data…</span>
+  </div>
+  <div class="admin-error" *ngIf="error">{{ error }}</div>
+</div>

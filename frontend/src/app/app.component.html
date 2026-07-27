@@ -1,0 +1,23 @@
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/">
+      <span class="brand-mark"></span>
+      <span class="brand-text">EY</span>
+    </a>
+
+    <nav class="nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Insights</a>
+      <a routerLink="/admin" routerLinkActive="active" *ngIf="auth.isLoggedIn">Admin</a>
+      <ng-container *ngIf="auth.isLoggedIn; else loginLink">
+        <button type="button" class="nav-btn" (click)="logout()">Logout</button>
+      </ng-container>
+      <ng-template #loginLink>
+        <a routerLink="/login" routerLinkActive="active">Sign in</a>
+      </ng-template>
+    </nav>
+  </header>
+
+  <main class="main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

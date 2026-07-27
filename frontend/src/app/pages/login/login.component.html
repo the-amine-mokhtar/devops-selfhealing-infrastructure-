@@ -1,0 +1,26 @@
+<div class="login-card">
+  <div class="login-head">
+    <span class="brand-mark"></span>
+    <h1>Admin access</h1>
+    <p>Sign in to manage engagements</p>
+  </div>
+  <div class="login-body">
+    <div class="login-error" *ngIf="error">{{ error }}</div>
+    <div class="login-error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">Email is required.</div>
+    <div class="login-error" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">Password is required.</div>
+    <form [formGroup]="form" (ngSubmit)="login()">
+      <label>
+        Email
+        <input formControlName="email" type="text" placeholder="you@firm.com" autocomplete="email" />
+      </label>
+      <label>
+        Password
+        <input formControlName="password" type="password" placeholder="••••••" autocomplete="current-password" />
+      </label>
+      <button type="submit" [disabled]="loading">Sign in</button>
+    </form>
+  </div>
+  <div class="login-foot">
+    <a routerLink="/">← Back to insights</a>
+  </div>
+</div>

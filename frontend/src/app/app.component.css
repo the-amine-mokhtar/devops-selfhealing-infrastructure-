@@ -1,0 +1,85 @@
+:host {
+	display: block;
+	min-height: 100vh;
+	background: #f3f1eb;
+	color: #1d1d1b;
+}
+
+.shell {
+	min-height: 100vh;
+}
+
+.topbar {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1rem 2rem;
+	background: rgba(33, 33, 39, 0.96);
+	backdrop-filter: blur(18px);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.7rem;
+	color: #fff;
+	text-decoration: none;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+}
+
+.brand-mark {
+	width: 1.6rem;
+	height: 1.6rem;
+	background: linear-gradient(135deg, #ffd100 0 72%, transparent 72% 100%);
+	transform: skewX(-18deg);
+}
+
+.brand-text {
+	font-size: 1.6rem;
+}
+
+.nav {
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
+}
+
+.nav a,
+.nav .nav-btn {
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  font-size: 0.98rem;
+  font-weight: 600;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.nav a.active,
+.nav .nav-btn:hover {
+  color: #fff;
+}
+
+.main {
+	width: 100%;
+}
+
+@media (max-width: 760px) {
+	.topbar {
+		padding: 0.9rem 1rem;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.nav {
+		gap: 1rem;
+	}
+}
