@@ -1,0 +1,29 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: k3s-cluster
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t engagement-backend:v1 ./backend
+
+      - name: Build frontend image
+        run: docker build -t engagement-frontend:v1 ./frontend
+
+      - name: Import images into k3d
+        run: k3d image import engagement-backend:v1 engagement-frontend:v1 -c devopslab
+
+      - name: Deploy to k3d
+        run: |
+          export KUBECONFIG=/home/mokh/.kube/config
+          kubectl rollout restart deployment/engagement-backend
+          kubectl rollout restart deployment/engagement-frontend
+          kubectl rollout status deployment/engagement-backend --timeout=120s
+          kubectl rollout status deployment/engagement-frontend --timeout=120s
