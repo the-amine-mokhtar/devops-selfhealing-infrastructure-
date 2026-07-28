@@ -1,0 +1,113 @@
+/* ---------- HERO ---------- */
+.hero {
+  position: relative;
+  min-height: 600px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(201, 79, 214, .35), transparent 60%),
+    linear-gradient(180deg, #2b2540 0%, #171626 60%, #0f0f18 100%);
+  color: var(--text-light);
+  overflow: hidden;
+  padding: 60px 40px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.hero-frame {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 280px;
+  border: 5px solid;
+  border-image: linear-gradient(135deg, var(--grad-start), var(--grad-mid), var(--grad-end)) 1;
+  opacity: .9;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.hero-text .eyebrow {
+  color: var(--yellow);
+  font-weight: 700;
+  letter-spacing: .06em;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.hero-text h1 {
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1.15;
+  margin: 0;
+  max-width: 640px;
+  font-weight: 700;
+}
+
+.hero-featured {
+  border-left: 3px solid var(--yellow);
+  padding-left: 16px;
+  max-width: 260px;
+  text-align: left;
+}
+
+.hero-featured .label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.hero-featured .headline {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 6px 0;
+}
+
+.hero-featured .date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------- PURPOSE ---------- */
+.purpose {
+  padding: 70px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.purpose h2 {
+  color: #c9a400;
+  font-size: 34px;
+  margin: 0 0 24px;
+}
+
+.purpose .cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.purpose p {
+  line-height: 1.6;
+  color: #3a3a44;
+  font-size: 15px;
+}
+
+@media (max-width: 720px) {
+  .hero-frame {
+    width: 180px;
+    height: 180px;
+  }
+
+  .purpose .cols {
+    grid-template-columns: 1fr;
+  }
+}

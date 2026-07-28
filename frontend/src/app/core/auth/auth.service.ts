@@ -50,6 +50,30 @@ export class AuthService {
     }
   }
 
+  getRole(): string | null {
+    const raw = localStorage.getItem(this.USER_KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw).role ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'Admin';
+  }
+
+  getUser(): { email?: string; fullName?: string; role?: string } | null {
+    const raw = localStorage.getItem(this.USER_KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+
   markExpired(): void {
     this.sessionExpiredSubject.next(true);
   }

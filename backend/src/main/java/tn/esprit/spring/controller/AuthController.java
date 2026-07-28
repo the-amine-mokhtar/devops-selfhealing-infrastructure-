@@ -3,6 +3,7 @@ package tn.esprit.spring.controller;
 import tn.esprit.spring.dto.ChangePasswordRequest;
 import tn.esprit.spring.dto.JwtResponse;
 import tn.esprit.spring.dto.LoginRequest;
+import tn.esprit.spring.dto.RegisterRequest;
 import tn.esprit.spring.entities.User;
 import tn.esprit.spring.repository.UserRepository;
 import tn.esprit.spring.config.JwtUtil;
@@ -39,6 +40,24 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
         return ResponseEntity.ok(new JwtResponse(token, user.getEmail(), user.getFullName(), user.getRole()));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+        if (userRepository.findByEmailIgnoreCase(request.email()).isPresent()) {
+            return ResponseEntity.badRequest().body("Email already exists");
+        }
+
+        User user = new User();
+        user.setFullName(request.fullName().trim());
+        user.setEmail(request.email().trim().toLowerCase());
+        user.setRole("Consultant");
+        user.setPassword(passwordEncoder.encode(request.password()));
+        userRepository.save(user);
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new JwtResponse(token, user.getEmail(), user.getFullName(), user.getRole()));
     }
 
     @PostMapping("/change-password")
