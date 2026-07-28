@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: engagement-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: engagement-frontend }
+  template:
+    metadata:
+      labels: { app: engagement-frontend }
+    spec:
+      containers:
+        - name: frontend
+          image: engagement-frontend:v1
+          imagePullPolicy: Never
+          ports: [{ containerPort: 80 }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: engagement-frontend
+spec:
+  selector: { app: engagement-frontend }
+  ports: [{ port: 80, targetPort: 80 }]

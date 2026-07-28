@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: engagement-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: engagement-backend }
+  template:
+    metadata:
+      labels: { app: engagement-backend }
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z mysql 3306; do echo waiting for mysql; sleep 2; done']
+      containers:
+        - name: backend
+          image: engagement-backend:v1
+          imagePullPolicy: Never
+          ports: [{ containerPort: 8080 }]
+          livenessProbe:
+            httpGet: { path: /actuator/health, port: 8080 }
+            initialDelaySeconds: 20
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8080 }
+            initialDelaySeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: engagement-backend
+spec:
+  selector: { app: engagement-backend }
+  ports: [{ port: 8080, targetPort: 8080 }]
