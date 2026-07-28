@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angu
 import { finalize } from 'rxjs';
 import { Engagement, EngagementStatus } from '../../core/models/engagement.model';
 import { User } from '../../core/models/user.model';
+import { AuthService } from '../../core/auth/auth.service';
 import { TrackerApiService } from '../../core/services/tracker-api.service';
 import { saveAs } from 'file-saver';
 
@@ -20,6 +21,11 @@ export class DashboardComponent implements OnInit {
   readonly roleOptions = ['Partner', 'Manager', 'Consultant', 'Analyst'];
   readonly today = new Date().toISOString().slice(0, 10);
   readonly pageSize = 5;
+  readonly auth = inject(AuthService);
+
+  get isAdmin(): boolean {
+    return this.auth.isAdmin();
+  }
 
   viewMode: ViewMode = 'engagements';
   loading = false;

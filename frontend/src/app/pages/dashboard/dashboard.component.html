@@ -39,7 +39,7 @@
 
   <div class="admin-tabs">
     <button type="button" [class.active]="viewMode === 'engagements'" (click)="setViewMode('engagements')">Engagements</button>
-    <button type="button" [class.active]="viewMode === 'users'" (click)="setViewMode('users')">Users</button>
+    <button type="button" *ngIf="isAdmin" [class.active]="viewMode === 'users'" (click)="setViewMode('users')">Users</button>
   </div>
 
   <section class="admin-section" *ngIf="viewMode === 'engagements'">
@@ -59,7 +59,7 @@
         </div>
       </div>
 
-      <div class="admin-form-row">
+      <div class="admin-form-row" *ngIf="isAdmin">
         <form [formGroup]="engagementForm" (ngSubmit)="saveEngagement()" class="admin-form">
           <div class="admin-form-field">
             <label>Client</label>
@@ -123,7 +123,7 @@
               <td>{{ item.startDate }}</td>
               <td [class.admin-overdue]="item.deadline && item.deadline < today">{{ item.deadline }}</td>
               <td class="admin-cell-value">{{ item.value | currency:'USD':'symbol':'1.0-2' }}</td>
-              <td class="admin-row-actions">
+              <td class="admin-row-actions" *ngIf="isAdmin">
                 <button type="button" class="btn-sm" (click)="editEngagement(item)">Edit</button>
                 <button type="button" class="btn-sm btn-sm--danger" (click)="deleteEngagement(item.id!)">Delete</button>
               </td>
@@ -163,7 +163,7 @@
         </div>
       </div>
 
-      <div class="admin-form-row">
+      <div class="admin-form-row" *ngIf="isAdmin">
         <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="admin-form admin-form--users">
           <div class="admin-form-field">
             <label>Full name</label>
@@ -205,7 +205,7 @@
               <td class="admin-cell-name">{{ user.fullName }}</td>
               <td>{{ user.email }}</td>
               <td><span class="admin-badge admin-badge--role">{{ user.role }}</span></td>
-              <td class="admin-row-actions">
+              <td class="admin-row-actions" *ngIf="isAdmin">
                 <button type="button" class="btn-sm" (click)="editUser(user)">Edit</button>
                 <button type="button" class="btn-sm" (click)="viewUserEngagements(user)">Engagements</button>
                 <button type="button" class="btn-sm btn-sm--danger" (click)="deleteUser(user.id!)">Delete</button>
