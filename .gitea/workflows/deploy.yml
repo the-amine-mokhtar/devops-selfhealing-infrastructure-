@@ -28,5 +28,16 @@ jobs:
           export KUBECONFIG=/home/mokh/.kube/config
           kubectl rollout restart deployment/engagement-backend
           kubectl rollout restart deployment/engagement-frontend
-          kubectl rollout status deployment/engagement-backend --timeout=120s
-          kubectl rollout status deployment/engagement-frontend --timeout=120s
+          if ! kubectl rollout status deployment/engagement-backend --timeout=120s; then
+            echo "Backend rollout failed — rolling back"
+            kubectl rollout undo deployment/engagement-backend
+            kubectl rollout status deployment/engagement-backend --timeout=120s
+            exit 1
+          fi
+
+          if ! kubectl rollout status deployment/engagement-frontend --timeout=120s; then
+            echo "Frontend rollout failed — rolling back"
+            kubectl rollout undo deployment/engagement-frontend
+            kubectl rollout status deployment/engagement-frontend --timeout=120s
+            exit 1
+          fi
