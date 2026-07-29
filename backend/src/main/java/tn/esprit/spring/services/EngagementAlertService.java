@@ -65,11 +65,10 @@ public class EngagementAlertService {
             }
         }
     }
-}
-
 	@Transactional
-	public void markDeadlineAlertSent(Long engagementId) {
-    		Engagement e = engagementRepository.findById(engagementId).orElseThrow();
-    		e.setDeadlineAlertSent(true);
-    		engagementRepository.save(e);
+    	public void markDeadlineAlertSent(Long engagementId) {
+        	Engagement e = engagementRepository.findById(engagementId).orElseThrow();
+        	e.setDeadlineAlertSent(true);
+        	engagementRepository.save(e);
+  	}
 }
