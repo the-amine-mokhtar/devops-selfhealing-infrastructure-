@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: k3s-cluster:host
+    runs-on: k3s-cluster
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
