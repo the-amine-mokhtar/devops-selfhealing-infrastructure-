@@ -28,31 +28,28 @@ public class EngagementAlertService {
         this.emailService = emailService;
     }
 
-    @Scheduled(fixedRate = 30_000)
-    @Transactional
-    public void checkDeadlines() {
-        List<Engagement> overdue = engagementRepository.findOverdueEngagementsWithoutAlert();
-        for (Engagement e : overdue) {
-            try {
-                User consultant = e.getConsultant();
-                String html = emailService.buildDeadlineAlertHtml(
-                        consultant.getFullName(),
-                        e.getClientName(),
-                        e.getDeadline().toString(),
-                        e.getStatus().name());
-                emailService.sendHtmlEmail(consultant.getEmail(),
-                        "EY Alert: Deadline Overdue - " + e.getClientName(), html);
-                e.setDeadlineAlertSent(true);
-                engagementRepository.save(e);
-                log.info("Deadline alert sent to {} for engagement {}", consultant.getEmail(), e.getId());
-            } catch (Exception ex) {
-                log.error("Failed to send deadline alert for engagement {}: {}", e.getId(), ex.getMessage());
-            }
-        }
-    }
+	@Scheduled(fixedRate = 30_000)
+	public void checkDeadlines() {
+    		List<Engagement> overdue = engagementRepository.findOverdueEngagementsWithoutAlert();
+    		for (Engagement e : overdue) {
+        		try {
+            			User consultant = e.getConsultant();
+            			String html = emailService.buildDeadlineAlertHtml(
+                    			consultant.getFullName(),
+                    			e.getClientName(),
+                    			e.getDeadline().toString(),
+                    			e.getStatus().name());
+            			emailService.sendHtmlEmail(consultant.getEmail(),
+                    			"EY Alert: Deadline Overdue - " + e.getClientName(), html);
+            			markDeadlineAlertSent(e.getId());
+            			log.info("Deadline alert sent to {} for engagement {}", consultant.getEmail(), e.getId());
+        		} catch (Exception ex) {
+            			log.error("Failed to send deadline alert for engagement {}: {}", e.getId(), ex.getMessage());
+        			}
+    		}
+	}
 
     @Scheduled(fixedRate = 60_000)
-    @Transactional
     public void checkHighDemand() {
         List<Object[]> results = engagementRepository.countActiveEngagementsByConsultant(highDemandThreshold);
         for (Object[] row : results) {
@@ -68,4 +65,11 @@ public class EngagementAlertService {
             }
         }
     }
+}
+
+	@Transactional
+	public void markDeadlineAlertSent(Long engagementId) {
+    		Engagement e = engagementRepository.findById(engagementId).orElseThrow();
+    		e.setDeadlineAlertSent(true);
+    		engagementRepository.save(e);
 }
