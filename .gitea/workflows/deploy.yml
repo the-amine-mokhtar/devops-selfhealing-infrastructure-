@@ -11,6 +11,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Inject application.properties
+        run: cp /home/mokh/ci-secrets/application.properties backend/src/main/resources/application.properties
+
       - name: Build backend image
         run: docker build -t engagement-backend:v1 ./backend
 
