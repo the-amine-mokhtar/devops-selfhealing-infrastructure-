@@ -1,11 +1,39 @@
 <div class="admin-view">
-  <header class="admin-topbar">
-    <div class="admin-topbar-left">
-      <span class="admin-topbar-user">{{ currentUser?.fullName || currentUser?.email || 'User' }}</span>
+  <header class="admin-hero">
+    <div class="admin-hero-copy">
+      <span class="ey-label">CONTROL CENTER</span>
+      <h1>Admin workspace</h1>
+      <p>Manage consultants and engagements across the firm.</p>
     </div>
-    <div class="admin-topbar-right">
-      <a routerLink="/" class="admin-topbar-btn">Return home</a>
-      <button type="button" class="admin-topbar-btn admin-topbar-btn--logout" (click)="logout()">Logout</button>
+    <div class="admin-stats">
+      <div class="admin-stat">
+        <div class="admin-stat-icon admin-stat-icon--users"></div>
+        <div>
+          <strong>{{ users.length }}</strong>
+          <span>Consultants</span>
+        </div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-icon admin-stat-icon--all"></div>
+        <div>
+          <strong>{{ engagements.length }}</strong>
+          <span>Engagements</span>
+        </div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-icon admin-stat-icon--active"></div>
+        <div>
+          <strong>{{ activeEngagements }}</strong>
+          <span>Active</span>
+        </div>
+      </div>
+      <div class="admin-stat">
+        <div class="admin-stat-icon admin-stat-icon--done"></div>
+        <div>
+          <strong>{{ completedEngagements }}</strong>
+          <span>Completed</span>
+        </div>
+      </div>
     </div>
   </header>
 

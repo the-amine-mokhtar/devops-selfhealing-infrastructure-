@@ -1,17 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { Engagement } from '../../core/models/engagement.model';
 import { TrackerApiService } from '../../core/services/tracker-api.service';
-import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './home.component.html'
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   loading = true;
   error = '';
   engagementCount = 0;
@@ -19,9 +17,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   activeCount = 0;
   completedCount = 0;
   partners: Engagement[] = [];
-  carouselIndex = 0;
-  private carouselTimer: ReturnType<typeof setInterval> | null = null;
-  readonly auth = inject(AuthService);
+  carouselPaused = false;
 
   constructor(private readonly trackerApi: TrackerApiService) {}
 
@@ -39,7 +35,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.completedCount = engagements.filter((e) => e.status === 'COMPLETED').length;
         this.partners = engagements.slice(0, 8);
         this.loading = false;
-        this.startCarousel();
       },
       error: () => {
         this.error = 'Backend not reachable yet. Start Spring Boot to load live tracker data.';
@@ -48,28 +43,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.stopCarousel();
-  }
-
-  private startCarousel(): void {
-    this.carouselTimer = setInterval(() => {
-      this.carouselIndex = (this.carouselIndex + 1) % Math.max(this.partners.length, 1);
-    }, 2500);
-  }
-
-  private stopCarousel(): void {
-    if (this.carouselTimer) {
-      clearInterval(this.carouselTimer);
-      this.carouselTimer = null;
-    }
-  }
-
   pauseCarousel(): void {
-    this.stopCarousel();
+    this.carouselPaused = true;
   }
 
   resumeCarousel(): void {
-    this.startCarousel();
+    this.carouselPaused = false;
   }
 }

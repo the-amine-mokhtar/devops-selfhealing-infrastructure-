@@ -65,20 +65,22 @@
   </section>
 
   <section class="partners" *ngIf="!loading && partners.length">
-    <div class="partners-head">
-      <h2>Our partners</h2>
-      <a routerLink="/admin" class="partners-cta">Enter admin →</a>
-    </div>
+    <h2>Our partners</h2>
     <div class="carousel-track" (mouseenter)="pauseCarousel()" (mouseleave)="resumeCarousel()">
-      <div class="carousel-slide" *ngFor="let p of partners; let i = index" [class.active]="i === carouselIndex">
-        <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName + ' logo'" class="partner-logo" />
-        <div class="partner-fallback" *ngIf="!p.logo">
-          <span class="partner-initials">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</span>
+      <div class="carousel-strip" [class.paused]="carouselPaused">
+        <div class="carousel-item" *ngFor="let p of partners">
+          <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName + ' logo'" class="partner-logo" />
+          <div class="partner-fallback" *ngIf="!p.logo">
+            <span class="partner-initials">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</span>
+          </div>
+        </div>
+        <div class="carousel-item" *ngFor="let p of partners">
+          <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName + ' logo'" class="partner-logo" />
+          <div class="partner-fallback" *ngIf="!p.logo">
+            <span class="partner-initials">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="carousel-dots">
-      <button *ngFor="let p of partners; let i = index" class="carousel-dot" [class.active]="i === carouselIndex" (click)="carouselIndex = i"></button>
     </div>
   </section>
 </div>
