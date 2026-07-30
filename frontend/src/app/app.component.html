@@ -1,21 +1,32 @@
 <header class="site-header">
-  <a class="brand" routerLink="/">
-    <span class="brand-mark"></span>
-    <span class="brand-copy">EY<span>Building a better working world</span></span>
-  </a>
-  <ul class="main-nav">
-    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Insights</a></li>
-    <li><a routerLink="/about" routerLinkActive="active">About</a></li>
-  </ul>
-  <div class="header-utils">
-    <a routerLink="/admin" routerLinkActive="active" *ngIf="auth.isLoggedIn">Admin</a>
-    <ng-container *ngIf="auth.isLoggedIn; else loginLink">
-      <a href="#" (click)="logout(); $event.preventDefault()">Logout</a>
-    </ng-container>
-    <ng-template #loginLink>
-      <a routerLink="/login" routerLinkActive="active">Sign in</a>
-    </ng-template>
-  </div>
+  <ng-container *ngIf="!isAdminRoute; else adminHeader">
+    <a class="brand" routerLink="/">
+      <span class="brand-mark"></span>
+      <span class="brand-copy">EY<span>Building a better working world</span></span>
+    </a>
+    <ul class="main-nav">
+      <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Insights</a></li>
+      <li><a routerLink="/about" routerLinkActive="active">About</a></li>
+    </ul>
+    <div class="header-utils">
+      <a routerLink="/admin" routerLinkActive="active" *ngIf="auth.isLoggedIn">Admin</a>
+      <ng-container *ngIf="auth.isLoggedIn; else loginLink">
+        <a href="#" (click)="logout(); $event.preventDefault()">Logout</a>
+      </ng-container>
+      <ng-template #loginLink>
+        <a routerLink="/login" routerLinkActive="active">Sign in</a>
+      </ng-template>
+    </div>
+  </ng-container>
+  <ng-template #adminHeader>
+    <div class="admin-header-inner">
+      <span class="admin-header-user">{{ currentUser?.fullName || currentUser?.email || 'User' }}</span>
+      <div class="admin-header-links">
+        <a routerLink="/">Return home</a>
+        <a href="#" (click)="logout(); $event.preventDefault()">Logout</a>
+      </div>
+    </div>
+  </ng-template>
 </header>
 
 <main>

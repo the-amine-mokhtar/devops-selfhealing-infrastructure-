@@ -13,5 +13,6 @@ public record EngagementRequest(
         @NotNull(message = "Consultant is required") Long consultantId,
         @NotNull(message = "Start date is required") LocalDate startDate,
         @NotNull(message = "Value is required") @PositiveOrZero(message = "Value must be zero or positive") BigDecimal value,
-        @NotNull(message = "Deadline is required") LocalDate deadline) {
+        @NotNull(message = "Deadline is required") LocalDate deadline,
+        String logo) {
 }

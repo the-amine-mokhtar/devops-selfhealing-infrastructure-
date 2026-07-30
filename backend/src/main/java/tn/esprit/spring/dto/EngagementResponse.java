@@ -12,5 +12,6 @@ public record EngagementResponse(
         LocalDate startDate,
         BigDecimal value,
         LocalDate deadline,
-        boolean deadlineAlertSent) {
+        boolean deadlineAlertSent,
+        String logo) {
 }

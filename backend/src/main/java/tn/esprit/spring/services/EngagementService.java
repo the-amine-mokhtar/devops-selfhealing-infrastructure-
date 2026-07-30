@@ -46,6 +46,7 @@ public class EngagementService {
         engagement.setStartDate(request.startDate());
         engagement.setValue(request.value());
         engagement.setDeadline(request.deadline());
+        engagement.setLogo(request.logo());
         return toResponse(engagementRepository.save(engagement));
     }
 
@@ -59,6 +60,7 @@ public class EngagementService {
         engagement.setStartDate(request.startDate());
         engagement.setValue(request.value());
         engagement.setDeadline(request.deadline());
+        engagement.setLogo(request.logo());
         return toResponse(engagementRepository.save(engagement));
     }
 
@@ -88,6 +90,7 @@ public class EngagementService {
                 engagement.getStartDate(),
                 engagement.getValue(),
                 engagement.getDeadline(),
-                engagement.isDeadlineAlertSent());
+                engagement.isDeadlineAlertSent(),
+                engagement.getLogo());
     }
 }

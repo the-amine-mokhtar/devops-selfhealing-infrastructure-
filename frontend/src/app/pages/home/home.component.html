@@ -64,23 +64,21 @@
     </article>
   </section>
 
-  <section class="spotlight" *ngIf="!loading && spotlight.length">
-    <div class="spotlight-head">
-      <h2>Recent engagements</h2>
-      <a routerLink="/admin" class="spotlight-cta">View all →</a>
+  <section class="partners" *ngIf="!loading && partners.length">
+    <div class="partners-head">
+      <h2>Our partners</h2>
+      <a routerLink="/admin" class="partners-cta">Enter admin →</a>
     </div>
-    <div class="spotlight-grid">
-      <article class="spotlight-card" *ngFor="let item of spotlight">
-        <div class="spotlight-card-top">
-          <span class="badge" [class.badge--active]="item.status === 'ACTIVE'" [class.badge--done]="item.status === 'COMPLETED'" [class.badge--warn]="item.status === 'ON_HOLD'">{{ item.status }}</span>
-          <span class="spotlight-value">{{ item.value | currency:'USD':'symbol':'1.0-0' }}</span>
+    <div class="carousel-track" (mouseenter)="pauseCarousel()" (mouseleave)="resumeCarousel()">
+      <div class="carousel-slide" *ngFor="let p of partners; let i = index" [class.active]="i === carouselIndex">
+        <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName + ' logo'" class="partner-logo" />
+        <div class="partner-fallback" *ngIf="!p.logo">
+          <span class="partner-initials">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</span>
         </div>
-        <h4>{{ item.clientName }}</h4>
-        <div class="spotlight-meta">
-          <span>{{ item.consultant.fullName }}</span>
-          <span>Deadline {{ item.deadline }}</span>
-        </div>
-      </article>
+      </div>
+    </div>
+    <div class="carousel-dots">
+      <button *ngFor="let p of partners; let i = index" class="carousel-dot" [class.active]="i === carouselIndex" (click)="carouselIndex = i"></button>
     </div>
   </section>
 </div>

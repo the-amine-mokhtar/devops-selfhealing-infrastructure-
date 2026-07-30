@@ -11,6 +11,7 @@ export interface Engagement {
   value: number;
   deadline: string;
   deadlineAlertSent: boolean;
+  logo?: string;
 }
 
 export interface EngagementFormValue {
@@ -20,4 +21,5 @@ export interface EngagementFormValue {
   startDate: string;
   value: number;
   deadline: string;
+  logo?: string;
 }

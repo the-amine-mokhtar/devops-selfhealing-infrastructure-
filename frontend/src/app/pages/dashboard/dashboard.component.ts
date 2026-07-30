@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { Engagement, EngagementStatus } from '../../core/models/engagement.model';
 import { User } from '../../core/models/user.model';
@@ -13,15 +14,19 @@ type ViewMode = 'engagements' | 'users';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit {
   readonly statuses: EngagementStatus[] = ['PLANNED', 'ACTIVE', 'ON_HOLD', 'COMPLETED'];
   readonly roleOptions = ['Partner', 'Manager', 'Consultant', 'Analyst'];
   readonly today = new Date().toISOString().slice(0, 10);
-  readonly pageSize = 5;
   readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  get currentUser(): { email?: string; fullName?: string } | null {
+    return this.auth.getUser();
+  }
 
   get isAdmin(): boolean {
     return this.auth.isAdmin();
@@ -41,9 +46,6 @@ export class DashboardComponent implements OnInit {
   users: User[] = [];
   selectedUserForEngagements: User | null = null;
 
-  engagementPage = 1;
-  userPage = 1;
-
   private readonly fb = inject(FormBuilder);
 
   engagementForm = this.fb.group({
@@ -52,7 +54,8 @@ export class DashboardComponent implements OnInit {
     consultantId: [0, [Validators.required, Validators.min(1)]],
     startDate: ['', Validators.required],
     value: [0, [Validators.required, Validators.min(0)]],
-    deadline: ['', Validators.required]
+    deadline: ['', Validators.required],
+    logo: ['']
   });
 
   userForm = this.fb.group({
@@ -68,6 +71,11 @@ export class DashboardComponent implements OnInit {
     this.loadAll();
   }
 
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/']);
+  }
+
   setViewMode(mode: ViewMode): void {
     this.viewMode = mode;
   }
@@ -79,7 +87,6 @@ export class DashboardComponent implements OnInit {
     this.api.getUsers().subscribe({
       next: (users) => {
         this.users = users;
-        this.userPage = 1;
         this.refreshEngagements();
       },
       error: () => {
@@ -93,7 +100,6 @@ export class DashboardComponent implements OnInit {
     this.api.getEngagements(this.search || undefined, this.statusFilter || undefined).subscribe({
       next: (engagements) => {
         this.engagements = engagements;
-        this.engagementPage = 1;
         this.loading = false;
         if (!this.engagementForm.value.consultantId && this.users.length) {
           this.engagementForm.patchValue({ consultantId: this.users[0].id ?? 0 });
@@ -108,7 +114,6 @@ export class DashboardComponent implements OnInit {
 
   applyFilters(): void {
     this.selectedUserForEngagements = null;
-    this.engagementPage = 1;
     this.refreshEngagements();
   }
 
@@ -139,7 +144,8 @@ export class DashboardComponent implements OnInit {
       consultantId: this.users[0]?.id ?? 0,
       startDate: '',
       value: 0,
-      deadline: ''
+      deadline: '',
+      logo: ''
     });
   }
 
@@ -151,7 +157,8 @@ export class DashboardComponent implements OnInit {
       consultantId: item.consultant.id ?? 0,
       startDate: item.startDate,
       value: item.value,
-      deadline: item.deadline
+      deadline: item.deadline,
+      logo: item.logo || ''
     });
   }
 
@@ -269,43 +276,5 @@ export class DashboardComponent implements OnInit {
 
   get completedEngagements(): number {
     return this.engagements.filter((engagement) => engagement.status === 'COMPLETED').length;
-  }
-
-  get paginatedEngagements(): Engagement[] {
-    const start = (this.engagementPage - 1) * this.pageSize;
-    return this.filteredEngagements.slice(start, start + this.pageSize);
-  }
-
-  get paginatedUsers(): User[] {
-    const start = (this.userPage - 1) * this.pageSize;
-    return this.users.slice(start, start + this.pageSize);
-  }
-
-  get totalEngagementPages(): number {
-    return Math.ceil(this.filteredEngagements.length / this.pageSize) || 1;
-  }
-
-  get totalUserPages(): number {
-    return Math.ceil(this.users.length / this.pageSize) || 1;
-  }
-
-  engagementPageNumbers(): number[] {
-    return Array.from({ length: this.totalEngagementPages }, (_, i) => i + 1);
-  }
-
-  userPageNumbers(): number[] {
-    return Array.from({ length: this.totalUserPages }, (_, i) => i + 1);
-  }
-
-  goToEngagementPage(page: number): void {
-    if (page >= 1 && page <= this.totalEngagementPages) {
-      this.engagementPage = page;
-    }
-  }
-
-  goToUserPage(page: number): void {
-    if (page >= 1 && page <= this.totalUserPages) {
-      this.userPage = page;
-    }
   }
 }

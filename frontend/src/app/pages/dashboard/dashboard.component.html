@@ -1,39 +1,11 @@
 <div class="admin-view">
-  <header class="admin-hero">
-    <div class="admin-hero-copy">
-      <span class="ey-label">CONTROL CENTER</span>
-      <h1>Admin workspace</h1>
-      <p>Manage consultants and engagements across the firm.</p>
+  <header class="admin-topbar">
+    <div class="admin-topbar-left">
+      <span class="admin-topbar-user">{{ currentUser?.fullName || currentUser?.email || 'User' }}</span>
     </div>
-    <div class="admin-stats">
-      <div class="admin-stat">
-        <div class="admin-stat-icon admin-stat-icon--users"></div>
-        <div>
-          <strong>{{ users.length }}</strong>
-          <span>Consultants</span>
-        </div>
-      </div>
-      <div class="admin-stat">
-        <div class="admin-stat-icon admin-stat-icon--all"></div>
-        <div>
-          <strong>{{ engagements.length }}</strong>
-          <span>Engagements</span>
-        </div>
-      </div>
-      <div class="admin-stat">
-        <div class="admin-stat-icon admin-stat-icon--active"></div>
-        <div>
-          <strong>{{ activeEngagements }}</strong>
-          <span>Active</span>
-        </div>
-      </div>
-      <div class="admin-stat">
-        <div class="admin-stat-icon admin-stat-icon--done"></div>
-        <div>
-          <strong>{{ completedEngagements }}</strong>
-          <span>Completed</span>
-        </div>
-      </div>
+    <div class="admin-topbar-right">
+      <a routerLink="/" class="admin-topbar-btn">Return home</a>
+      <button type="button" class="admin-topbar-btn admin-topbar-btn--logout" (click)="logout()">Logout</button>
     </div>
   </header>
 
@@ -90,6 +62,10 @@
             <label>Value ($)</label>
             <input formControlName="value" type="number" min="0" step="0.01" placeholder="0.00" />
           </div>
+          <div class="admin-form-field">
+            <label>Logo URL</label>
+            <input formControlName="logo" type="url" placeholder="https://example.com/logo.png" />
+          </div>
           <div class="admin-form-actions">
             <button type="submit" class="btn-primary">{{ selectedEngagementId ? 'Update' : 'Create' }}</button>
             <button type="button" class="btn-ghost" (click)="resetEngagementForm()">Reset</button>
@@ -106,6 +82,7 @@
         <table>
           <thead>
             <tr>
+              <th>Logo</th>
               <th>Client</th>
               <th>Status</th>
               <th>Consultant</th>
@@ -116,7 +93,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of paginatedEngagements">
+            <tr *ngFor="let item of filteredEngagements">
+              <td class="admin-cell-logo">
+                <img *ngIf="item.logo" [src]="item.logo" [alt]="item.clientName" class="admin-logo-thumb" />
+              </td>
               <td class="admin-cell-name">{{ item.clientName }}</td>
               <td><span class="admin-badge" [class.admin-badge--active]="item.status === 'ACTIVE'" [class.admin-badge--done]="item.status === 'COMPLETED'" [class.admin-badge--warn]="item.status === 'ON_HOLD'" [class.admin-badge--planned]="item.status === 'PLANNED'">{{ item.status }}</span></td>
               <td>{{ item.consultant.fullName }}</td>
@@ -130,15 +110,6 @@
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <div class="admin-pagination" *ngIf="filteredEngagements.length > pageSize">
-        <span class="admin-pagination-info">{{ filteredEngagements.length }} total · Page {{ engagementPage }} of {{ totalEngagementPages }}</span>
-        <div class="admin-pagination-controls">
-          <button type="button" class="btn-page" [class.btn-page--disabled]="engagementPage <= 1" (click)="goToEngagementPage(engagementPage - 1)" [disabled]="engagementPage <= 1">←</button>
-          <button type="button" class="btn-page" *ngFor="let p of engagementPageNumbers()" [class.btn-page--active]="p === engagementPage" (click)="goToEngagementPage(p)">{{ p }}</button>
-          <button type="button" class="btn-page" [class.btn-page--disabled]="engagementPage >= totalEngagementPages" (click)="goToEngagementPage(engagementPage + 1)" [disabled]="engagementPage >= totalEngagementPages">→</button>
-        </div>
       </div>
 
       <ng-template #emptyE>
@@ -201,7 +172,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let user of paginatedUsers">
+            <tr *ngFor="let user of users">
               <td class="admin-cell-name">{{ user.fullName }}</td>
               <td>{{ user.email }}</td>
               <td><span class="admin-badge admin-badge--role">{{ user.role }}</span></td>
@@ -213,15 +184,6 @@
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <div class="admin-pagination" *ngIf="users.length > pageSize">
-        <span class="admin-pagination-info">{{ users.length }} total · Page {{ userPage }} of {{ totalUserPages }}</span>
-        <div class="admin-pagination-controls">
-          <button type="button" class="btn-page" [class.btn-page--disabled]="userPage <= 1" (click)="goToUserPage(userPage - 1)" [disabled]="userPage <= 1">←</button>
-          <button type="button" class="btn-page" *ngFor="let p of userPageNumbers()" [class.btn-page--active]="p === userPage" (click)="goToUserPage(p)">{{ p }}</button>
-          <button type="button" class="btn-page" [class.btn-page--disabled]="userPage >= totalUserPages" (click)="goToUserPage(userPage + 1)" [disabled]="userPage >= totalUserPages">→</button>
-        </div>
       </div>
 
       <ng-template #emptyU>

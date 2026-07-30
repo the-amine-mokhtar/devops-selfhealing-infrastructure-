@@ -53,4 +53,7 @@ public class Engagement {
     @Column(nullable = false)
     private boolean deadlineAlertSent = false;
 
+    @Column(length = 512)
+    private String logo;
+
 }

@@ -195,6 +195,35 @@ main {
   max-width: 760px;
 }
 
+.admin-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.admin-header-user {
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.admin-header-links {
+  display: flex;
+  gap: 20px;
+}
+
+.admin-header-links a {
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-header-links a:hover {
+  color: var(--yellow);
+}
+
 @media (max-width: 720px) {
   .main-nav {
     display: none;
