@@ -64,23 +64,43 @@
     </article>
   </section>
 
-  <section class="partners" *ngIf="!loading && partners.length">
-    <h2>Our partners</h2>
-    <div class="carousel-track" (mouseenter)="pauseCarousel()" (mouseleave)="resumeCarousel()">
-      <div class="carousel-strip" [class.paused]="carouselPaused">
-        <div class="carousel-item" *ngFor="let p of partners">
-          <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName + ' logo'" class="partner-logo" />
-          <div class="partner-fallback" *ngIf="!p.logo">
-            <span class="partner-initials">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</span>
+  <section class="partners" *ngIf="!loading && partners.length" (mouseenter)="pauseAutoAdvance()" (mouseleave)="resumeAutoAdvance()">
+    <div class="partners-head">
+      <h2>Our partners</h2>
+      <div class="carousel-counter">
+        <span class="carousel-counter-current">{{ counterDisplay }}</span>
+        <span class="carousel-counter-sep">/</span>
+        <span class="carousel-counter-total">{{ totalDisplay }}</span>
+      </div>
+    </div>
+
+    <div class="carousel-viewport" #carouselViewport>
+      <div class="carousel-track"
+           #carouselTrack
+           (pointerdown)="onPointerDown($event)"
+           (pointermove)="onPointerMove($event)"
+           (pointerup)="onPointerUp($event)"
+           (pointercancel)="onPointerCancel()"
+           (wheel)="onWheel($event)">
+        <div class="card" *ngFor="let p of partners; let i = index" [class]="'card ' + cardOffset(i)">
+          <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName" class="card-logo" draggable="false" />
+          <div class="card-fallback" *ngIf="!p.logo">
+            <span class="card-initials">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</span>
           </div>
-        </div>
-        <div class="carousel-item" *ngFor="let p of partners">
-          <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName + ' logo'" class="partner-logo" />
-          <div class="partner-fallback" *ngIf="!p.logo">
-            <span class="partner-initials">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</span>
-          </div>
+          <div class="card-name">{{ p.clientName }}</div>
         </div>
       </div>
+    </div>
+
+    <button class="carousel-btn carousel-btn-prev" (click)="prev()" [class.disabled]="currentIndex === 0" [disabled]="currentIndex === 0">
+      <i class="arrow left"></i>
+    </button>
+    <button class="carousel-btn carousel-btn-next" (click)="next()" [disabled]="currentIndex >= getMaxIndex()">
+      <i class="arrow right"></i>
+    </button>
+
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="progressPercent"></div>
     </div>
   </section>
 </div>
