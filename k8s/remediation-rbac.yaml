@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: remediation-webhook
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: remediation-role
+  namespace: default
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: remediation-rolebinding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: remediation-webhook
+    namespace: default
+roleRef:
+  kind: Role
+  name: remediation-role
+  apiGroup: rbac.authorization.k8s.io

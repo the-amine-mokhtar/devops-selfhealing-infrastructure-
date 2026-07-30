@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: remediation-webhook
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: remediation-webhook }
+  template:
+    metadata:
+      labels: { app: remediation-webhook }
+    spec:
+      serviceAccountName: remediation-webhook
+      containers:
+        - name: webhook
+          image: remediation-webhook:v1
+          imagePullPolicy: Never
+          ports: [{ containerPort: 5000 }]
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits: { cpu: "100m", memory: "128Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: remediation-webhook
+  namespace: default
+spec:
+  selector: { app: remediation-webhook }
+  ports: [{ port: 5000, targetPort: 5000 }]
