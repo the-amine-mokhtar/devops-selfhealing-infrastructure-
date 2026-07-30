@@ -194,7 +194,7 @@ h1 {
   background: #faf8f3;
 }
 
-.title {
+.partners-title {
   text-align: center;
   font-size: 48px;
   font-weight: 700;
@@ -202,7 +202,7 @@ h1 {
   color: #171717;
 }
 
-.carousel {
+.partners-carousel {
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -210,7 +210,7 @@ h1 {
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
 }
 
-.track {
+.partners-track {
   display: flex;
   align-items: center;
   width: max-content;
@@ -219,11 +219,11 @@ h1 {
   animation: scroll 30s linear infinite;
 }
 
-.track:hover {
+.partners-track:hover {
   animation-play-state: paused;
 }
 
-.card {
+.partner-card {
   width: 220px;
   height: 320px;
   border-radius: 28px;
@@ -234,26 +234,26 @@ h1 {
   background: #fff;
 }
 
-.card:hover {
+.partner-card:hover {
   transform: scale(1.05);
 }
 
-.card.down {
+.partner-card.down {
   transform: translateY(45px);
 }
 
-.card.down:hover {
+.partner-card.down:hover {
   transform: translateY(45px) scale(1.05);
 }
 
-.card img {
+.partner-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.card-fallback {
+.partner-card-fallback {
   width: 100%;
   height: 100%;
   display: flex;
@@ -271,16 +271,16 @@ h1 {
 }
 
 @media (max-width: 900px) {
-  .card { width: 170px; height: 260px; }
-  .card.down { transform: translateY(30px); }
-  .card.down:hover { transform: translateY(30px) scale(1.05); }
+  .partner-card { width: 170px; height: 260px; }
+  .partner-card.down { transform: translateY(30px); }
+  .partner-card.down:hover { transform: translateY(30px) scale(1.05); }
 }
 
 @media (max-width: 600px) {
-  .card { width: 130px; height: 200px; border-radius: 20px; }
-  .card.down { transform: translateY(18px); }
-  .card.down:hover { transform: translateY(18px) scale(1.05); }
-  .title { font-size: 34px; margin-bottom: 40px; }
+  .partner-card { width: 130px; height: 200px; border-radius: 20px; }
+  .partner-card.down { transform: translateY(18px); }
+  .partner-card.down:hover { transform: translateY(18px) scale(1.05); }
+  .partners-title { font-size: 34px; margin-bottom: 40px; }
 }
 
 @media (max-width: 920px) {
