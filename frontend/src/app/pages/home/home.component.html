@@ -64,20 +64,20 @@
     </article>
   </section>
 
-  <section class="partners" *ngIf="!loading && partners.length" (mouseenter)="pauseAutoAdvance()" (mouseleave)="resumeAutoAdvance()">
+  <section class="partners partners-carousel" *ngIf="!loading && partners.length" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
     <div class="partners-head">
       <div>
         <div class="partners-sub">Our Network</div>
         <h2>Trusted partners</h2>
       </div>
       <div class="carousel-counter">
-        <span class="counter-current">{{ counterDisplay }}</span>
+        <span class="counter-current">{{ displayIndex }}</span>
         <span class="counter-sep">/</span>
-        <span class="counter-total">{{ totalDisplay }}</span>
+        <span class="counter-total">{{ totalSlidesStr }}</span>
       </div>
     </div>
 
-    <div class="carousel-viewport" #carouselViewport>
+    <div class="carousel-viewport">
       <div class="carousel-track"
            #carouselTrack
            (pointerdown)="onPointerDown($event)"
@@ -87,20 +87,22 @@
         <div class="card" *ngFor="let p of partners; let i = index" [class.card-down]="i % 2 === 0">
           <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName" class="card-logo" draggable="false" />
           <div class="card-fallback" *ngIf="!p.logo">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</div>
-          <div class="card-name">{{ p.clientName }}</div>
+          <div class="card-label">{{ p.clientName }}</div>
         </div>
       </div>
     </div>
 
-    <button class="nav-btn nav-prev" (click)="prev()" [class.disabled]="currentIndex <= 0">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <button class="nav-arrow nav-prev" (click)="prev()" [disabled]="currentIndex <= 0">
+      <i class="arrow-left"></i>
     </button>
-    <button class="nav-btn nav-next" (click)="next()" [class.disabled]="currentIndex >= maxIndex">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <button class="nav-arrow nav-next" (click)="next()" [disabled]="currentIndex >= maxIndex">
+      <i class="arrow-right"></i>
     </button>
 
-    <div class="progress-bar">
-      <div class="progress-fill" [style.width.%]="progressPercent"></div>
+    <div class="progress-wrap">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progressPercent"></div>
+      </div>
     </div>
   </section>
 </div>

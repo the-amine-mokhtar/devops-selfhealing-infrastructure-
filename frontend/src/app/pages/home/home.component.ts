@@ -24,7 +24,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   @ViewChild('carouselTrack') trackRef!: ElementRef<HTMLElement>;
 
-  private readonly step = 190;
+  private readonly step = 176;
+  private readonly padding = 120;
 
   constructor(private readonly trackerApi: TrackerApiService) {}
 
@@ -59,34 +60,34 @@ export class HomeComponent implements OnInit, OnDestroy {
     return n - 4;
   }
 
-  get progressPercent(): number {
-    const max = this.maxIndex;
-    return max === 0 ? 100 : (this.currentIndex / max) * 100;
-  }
-
-  get counterDisplay(): string {
+  get displayIndex(): string {
     return String(this.currentIndex + 1).padStart(2, '0');
   }
 
-  get totalDisplay(): string {
+  get totalSlidesStr(): string {
     return String(this.totalSlides).padStart(2, '0');
+  }
+
+  get progressPercent(): number {
+    const max = this.maxIndex;
+    return max === 0 ? 100 : ((this.currentIndex) / max) * 100;
   }
 
   prev(): void {
     if (this.currentIndex <= 0) return;
     this.currentIndex--;
-    this.applyOffset();
+    this.updateTransform();
     this.resetAutoAdvance();
   }
 
   next(): void {
     if (this.currentIndex >= this.maxIndex) return;
     this.currentIndex++;
-    this.applyOffset();
+    this.updateTransform();
     this.resetAutoAdvance();
   }
 
-  private applyOffset(): void {
+  private updateTransform(): void {
     const el = this.trackRef?.nativeElement;
     if (el) {
       el.style.transform = `translateX(-${this.currentIndex * this.step}px)`;
@@ -101,8 +102,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       } else {
         this.currentIndex++;
       }
-      this.applyOffset();
-    }, 3000);
+      this.updateTransform();
+    }, 4500);
   }
 
   private stopAutoAdvance(): void {
@@ -114,17 +115,22 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.startAutoAdvance();
   }
 
-  pauseAutoAdvance(): void { this.stopAutoAdvance(); }
-  resumeAutoAdvance(): void { this.startAutoAdvance(); }
+  onMouseEnter(): void { this.stopAutoAdvance(); }
+  onMouseLeave(): void { this.startAutoAdvance(); }
 
   // drag
-  private dragging = false;
+  private isDragging = false;
   private startX = 0;
   private startTransform = 0;
+  private dragVelocity = 0;
+  private lastX = 0;
+  private lastTime = 0;
 
   onPointerDown(e: PointerEvent): void {
-    this.dragging = true;
+    this.isDragging = true;
     this.startX = e.clientX;
+    this.lastX = e.clientX;
+    this.lastTime = Date.now();
     const el = this.trackRef?.nativeElement;
     if (el) {
       const m = new DOMMatrix(window.getComputedStyle(el).transform);
@@ -135,31 +141,38 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onPointerMove(e: PointerEvent): void {
-    if (!this.dragging) return;
+    if (!this.isDragging) return;
+    const now = Date.now();
+    const dt = now - this.lastTime;
+    if (dt > 0) this.dragVelocity = (e.clientX - this.lastX) / dt;
+    this.lastX = e.clientX;
+    this.lastTime = now;
     const el = this.trackRef?.nativeElement;
     if (el) {
       el.style.transform = `translateX(${this.startTransform + (e.clientX - this.startX)}px)`;
     }
   }
 
-  onPointerUp(_e: PointerEvent): void {
-    if (!this.dragging) return;
-    this.dragging = false;
+  onPointerUp(e: PointerEvent): void {
+    if (!this.isDragging) return;
+    this.isDragging = false;
     const el = this.trackRef?.nativeElement;
     if (el) el.classList.remove('dragging');
-    const dx = _e.clientX - this.startX;
-    if (dx < -40) this.currentIndex++;
-    else if (dx > 40) this.currentIndex--;
+    const delta = this.lastX - this.startX;
+    if (Math.abs(delta) > 60 || Math.abs(this.dragVelocity) > 0.5) {
+      if (delta < 0) this.currentIndex++;
+      else this.currentIndex--;
+    }
     this.currentIndex = Math.max(0, Math.min(this.currentIndex, this.maxIndex));
-    this.applyOffset();
+    this.updateTransform();
     this.resetAutoAdvance();
   }
 
   onPointerCancel(): void {
-    if (!this.dragging) return;
-    this.dragging = false;
+    if (!this.isDragging) return;
+    this.isDragging = false;
     const el = this.trackRef?.nativeElement;
     if (el) el.classList.remove('dragging');
-    this.applyOffset();
+    this.updateTransform();
   }
 }
