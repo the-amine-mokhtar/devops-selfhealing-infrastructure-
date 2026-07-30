@@ -64,45 +64,27 @@
     </article>
   </section>
 
-  <section class="partners partners-carousel" *ngIf="!loading && partners.length" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
-    <div class="partners-head">
-      <div>
-        <div class="partners-sub">Our Network</div>
-        <h2>Trusted partners</h2>
-      </div>
-      <div class="carousel-counter">
-        <span class="counter-current">{{ displayIndex }}</span>
-        <span class="counter-sep">/</span>
-        <span class="counter-total">{{ totalSlidesStr }}</span>
-      </div>
-    </div>
+  <section class="partners-section" *ngIf="!loading && partners.length">
 
-    <div class="carousel-viewport">
-      <div class="carousel-track"
-           #carouselTrack
-           (pointerdown)="onPointerDown($event)"
-           (pointermove)="onPointerMove($event)"
-           (pointerup)="onPointerUp($event)"
-           (pointercancel)="onPointerCancel()">
-        <div class="card" *ngFor="let p of partners; let i = index" [class.card-down]="i % 2 === 0">
-          <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName" class="card-logo" draggable="false" />
+    <h2 class="title">Trusted Partners</h2>
+
+    <div class="carousel">
+
+      <div class="track">
+
+        <div class="card" *ngFor="let p of partners; let i = index" [class.down]="i % 2 == 0">
+          <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName">
           <div class="card-fallback" *ngIf="!p.logo">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</div>
-          <div class="card-label">{{ p.clientName }}</div>
         </div>
+
+        <div class="card" *ngFor="let p of partners; let i = index" [class.down]="i % 2 == 0">
+          <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName">
+          <div class="card-fallback" *ngIf="!p.logo">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</div>
+        </div>
+
       </div>
+
     </div>
 
-    <button class="nav-arrow nav-prev" (click)="prev()" [disabled]="currentIndex <= 0">
-      <i class="arrow-left"></i>
-    </button>
-    <button class="nav-arrow nav-next" (click)="next()" [disabled]="currentIndex >= maxIndex">
-      <i class="arrow-right"></i>
-    </button>
-
-    <div class="progress-wrap">
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="progressPercent"></div>
-      </div>
-    </div>
   </section>
 </div>
