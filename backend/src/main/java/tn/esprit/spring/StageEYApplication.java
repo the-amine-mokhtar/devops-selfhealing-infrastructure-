@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableAspectJAutoProxy
 @EnableScheduling
-@EnableAsync
 public class StageEYApplication {
 
 	public static void main(String[] args) {
