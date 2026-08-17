@@ -4,6 +4,7 @@ metadata:
   name: engagement-backend
 spec:
   replicas: 1
+  revisionHistoryLimit: 3
   selector:
     matchLabels: { app: engagement-backend }
   template:
