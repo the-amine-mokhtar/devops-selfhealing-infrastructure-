@@ -28,10 +28,10 @@ spec:
             initialDelaySeconds: 10
           resources:
             requests:
-               cpu: "200m"
+               cpu: "300m"
                memory: "256Mi"
             limits:
-              cpu: "500m"
+              cpu: "1000m"
               memory: "512Mi"
 ---
 apiVersion: v1
