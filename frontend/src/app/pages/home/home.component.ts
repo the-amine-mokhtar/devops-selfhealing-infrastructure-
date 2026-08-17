@@ -21,6 +21,10 @@ export class HomeComponent implements OnInit {
 
   constructor(private readonly trackerApi: TrackerApiService) {}
 
+  arcClass(index: number): string {
+    return `arc-${index % 7}`;
+  }
+
   ngOnInit(): void {
     this.trackerApi.getUsers().subscribe({
       next: (users) => { this.userCount = users.length; }

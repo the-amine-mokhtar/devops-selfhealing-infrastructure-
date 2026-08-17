@@ -65,26 +65,30 @@
   </section>
 
   <section class="partners-section" *ngIf="!loading && partners.length">
+    <h2 class="partners-title">Trusted Partners</h2>
 
-    <h2 class="title">Trusted Partners</h2>
-
-    <div class="carousel">
-
-      <div class="track">
-
-        <div class="card" *ngFor="let p of partners; let i = index" [class.down]="i % 2 == 0">
+    <div class="partners-carousel">
+      <div class="partners-track">
+        <div
+          class="partner-card"
+          *ngFor="let p of partners; let i = index"
+          [ngClass]="arcClass(i)">
           <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName">
-          <div class="card-fallback" *ngIf="!p.logo">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</div>
+          <div class="partner-card-fallback" *ngIf="!p.logo">
+            {{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}
+          </div>
         </div>
 
-        <div class="card" *ngFor="let p of partners; let i = index" [class.down]="i % 2 == 0">
+        <div
+          class="partner-card"
+          *ngFor="let p of partners; let i = index"
+          [ngClass]="arcClass(partners.length + i)">
           <img *ngIf="p.logo" [src]="p.logo" [alt]="p.clientName">
-          <div class="card-fallback" *ngIf="!p.logo">{{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}</div>
+          <div class="partner-card-fallback" *ngIf="!p.logo">
+            {{ p.clientName.charAt(0) }}{{ p.clientName.split(' ').pop()?.charAt(0) }}
+          </div>
         </div>
-
       </div>
-
     </div>
-
   </section>
 </div>
